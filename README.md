@@ -1,4 +1,4 @@
 # jBPMRest
-jBPM Rest API Java library based on Retrofit
+jBPM Rest API client java library based on Retrofit
 
 # Usage
