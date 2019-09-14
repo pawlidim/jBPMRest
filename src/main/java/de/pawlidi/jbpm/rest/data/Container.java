@@ -1,9 +1,10 @@
 package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.Collection;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
@@ -12,75 +13,26 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Container implements Serializable {
 
-	@SerializedName("container-id")
-	private String id;
-	@SerializedName("status")
-	private String status;
-	@SerializedName("container-alias")
-	private String alias;
+	@JsonProperty("kie-container")
+	@JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+	private Collection<ContainerData> containerDataList;
 
 	public Container() {
 		super();
 	}
 
 	/**
-	 * @return the id
+	 * @return the containerDataList
 	 */
-	public String getId() {
-		return id;
+	public Collection<ContainerData> getContainerDataList() {
+		return containerDataList;
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param containerDataList the containerDataList to set
 	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the status
-	 */
-	public String getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	/**
-	 * @return the alias
-	 */
-	public String getAlias() {
-		return alias;
-	}
-
-	/**
-	 * @param alias the alias to set
-	 */
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(alias, id, status);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof Container)) {
-			return false;
-		}
-		Container other = (Container) obj;
-		return Objects.equals(alias, other.alias) && Objects.equals(id, other.id)
-				&& Objects.equals(status, other.status);
+	public void setContainerDataList(Collection<ContainerData> containerDataList) {
+		this.containerDataList = containerDataList;
 	}
 
 }

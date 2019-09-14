@@ -1,33 +1,60 @@
 package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Containers implements Serializable {
 
-	@SerializedName("kie-containers")
-	private List<Container> containers;
+	private String type;
+	private String msg;
+	private ContainersResult result;
 
 	public Containers() {
 		super();
-		this.containers = new ArrayList<>();
 	}
 
 	/**
-	 * @return the containers
+	 * @return the type
 	 */
-	public List<Container> getContainers() {
-		return containers;
+	public String getType() {
+		return type;
 	}
 
 	/**
-	 * @param containers the containers to set
+	 * @param type the type to set
 	 */
-	public void setContainers(List<Container> containers) {
-		this.containers = containers;
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	/**
+	 * @return the msg
+	 */
+	public String getMsg() {
+		return msg;
+	}
+
+	/**
+	 * @param msg the msg to set
+	 */
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+
+	/**
+	 * @return the result
+	 */
+	public ContainersResult getResult() {
+		return result;
+	}
+
+	/**
+	 * @param result the result to set
+	 */
+	public void setResult(ContainersResult result) {
+		this.result = result;
 	}
 
 }

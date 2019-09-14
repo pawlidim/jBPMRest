@@ -3,11 +3,16 @@ package de.pawlidi.jbpm.rest;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Collection;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.pawlidi.jbpm.rest.data.Container;
+import de.pawlidi.jbpm.rest.data.ContainerData;
 import de.pawlidi.jbpm.rest.data.Containers;
+import de.pawlidi.jbpm.rest.data.ProcessInstances;
 
 public class JbpmRestClientTest {
 
@@ -29,7 +34,30 @@ public class JbpmRestClientTest {
 	public void testGetContainers() {
 		Containers containers = client.getContainers();
 		assertNotNull(containers);
-		assertFalse(containers.getContainers().isEmpty());
+		assertNotNull(containers.getResult());
+		assertNotNull(containers.getResult().getContainers());
+		assertFalse(containers.getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.getResult().getContainers();
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				System.out.println(data.getId());
+			}
+		}
 	}
 
+	@Test
+	public void testProcessInstances() {
+		Containers containers = client.getContainers();
+		assertFalse(containers.getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.getResult().getContainers();
+		String containerId = null;
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				containerId = data.getId();
+				break;
+			}
+		}
+		ProcessInstances instances = client.getProcessInstances(containerId);
+		assertNotNull(instances);
+	}
 }

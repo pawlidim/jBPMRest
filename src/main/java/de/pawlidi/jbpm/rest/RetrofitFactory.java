@@ -2,9 +2,6 @@ package de.pawlidi.jbpm.rest;
 
 import java.io.IOException;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import okhttp3.Authenticator;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -13,7 +10,7 @@ import okhttp3.Response;
 import okhttp3.Route;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Factory class for retrofit library.
@@ -40,10 +37,8 @@ public final class RetrofitFactory {
 			Retrofit.Builder builder = new Retrofit.Builder();
 			builder.baseUrl(baseUrl);
 
-			Gson gson = new GsonBuilder().registerTypeAdapterFactory(new ItemTypeAdapterFactory()).create();
-			GsonConverterFactory converterFactory = GsonConverterFactory.create(gson);
 			// add converter
-			builder.addConverterFactory(converterFactory);
+			builder.addConverterFactory(JacksonConverterFactory.create());
 
 			// add client
 			addClient(builder, username, password);
@@ -57,6 +52,7 @@ public final class RetrofitFactory {
 		OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
 		// add other interceptors
 		httpClientBuilder.addInterceptor(new LoggingInterceptor());
+		// add http authenticator
 		httpClientBuilder.authenticator(new Authenticator() {
 			@Override
 			public Request authenticate(Route route, Response response) throws IOException {
