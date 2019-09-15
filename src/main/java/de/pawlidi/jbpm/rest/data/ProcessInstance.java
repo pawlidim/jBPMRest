@@ -29,13 +29,12 @@ public class ProcessInstance implements Serializable {
 	@JsonProperty("process-version")
 	private String version;
 	@JsonProperty("process-instance-state")
-	private String state;
+	private ProcessInstanceStatus status;
 	@JsonProperty("container-id")
 	private String containerId;
 	@JsonProperty("initiator")
 	private String initiator;
-	@JsonProperty("start-date")
-	@JsonFormat(with = JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+	// @JsonProperty("start-date")
 	private Date startDate;
 	@JsonProperty("process-instance-desc")
 	private String description;
@@ -116,15 +115,15 @@ public class ProcessInstance implements Serializable {
 	/**
 	 * @return the state
 	 */
-	public String getState() {
-		return state;
+	public ProcessInstanceStatus getStatus() {
+		return status;
 	}
 
 	/**
 	 * @param state the state to set
 	 */
-	public void setState(String state) {
-		this.state = state;
+	public void setStatus(ProcessInstanceStatus status) {
+		this.status = status;
 	}
 
 	/**

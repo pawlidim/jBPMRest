@@ -5,6 +5,11 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 
+ * @author pawlidim
+ *
+ */
 public class ContainerRelease implements Serializable {
 
 	@JsonProperty("group-id")

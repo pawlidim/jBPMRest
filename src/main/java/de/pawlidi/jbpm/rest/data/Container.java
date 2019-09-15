@@ -2,6 +2,7 @@ package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,6 +34,23 @@ public class Container implements Serializable {
 	 */
 	public void setContainerDataList(Collection<ContainerData> containerDataList) {
 		this.containerDataList = containerDataList;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(containerDataList);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Container)) {
+			return false;
+		}
+		Container other = (Container) obj;
+		return Objects.equals(containerDataList, other.containerDataList);
 	}
 
 }
