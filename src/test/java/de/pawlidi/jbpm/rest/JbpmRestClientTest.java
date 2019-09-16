@@ -14,12 +14,14 @@ import org.junit.Test;
 import de.pawlidi.jbpm.rest.data.Container;
 import de.pawlidi.jbpm.rest.data.ContainerData;
 import de.pawlidi.jbpm.rest.data.Containers;
-import de.pawlidi.jbpm.rest.data.ProcessInstance;
+import de.pawlidi.jbpm.rest.data.ProcessDefinition;
+import de.pawlidi.jbpm.rest.data.ProcessDefinitions;
+import de.pawlidi.jbpm.rest.data.ProcessInstanceStatus;
 import de.pawlidi.jbpm.rest.data.ProcessInstances;
 
 public class JbpmRestClientTest {
 
-	private static final String URL = "http://192.168.99.100";
+	private static final String URL = "http://localhost:8181";
 	private static final String USER = "wbadmin";
 	private static final String PASSWORD = "wbadmin";
 	private JbpmRestClient client;
@@ -61,12 +63,13 @@ public class JbpmRestClientTest {
 				break;
 			}
 		}
-		Optional<ProcessInstances> instances = client.getProcessInstances(containerId);
+		Optional<ProcessInstances> instances = client.getProcessInstances(containerId, 1, 999, null, null,
+				ProcessInstanceStatus.Active);
 		assertTrue(instances.isPresent());
 	}
 
 	@Test
-	public void testProcessInstance() {
+	public void testProcessDefinitions() {
 		Optional<Containers> containers = client.getContainers();
 		assertTrue(containers.isPresent());
 		assertFalse(containers.get().getResult().getContainers().isEmpty());
@@ -78,11 +81,12 @@ public class JbpmRestClientTest {
 				break;
 			}
 		}
-		Optional<ProcessInstances> instances = client.getProcessInstances(containerId);
-		assertTrue(instances.isPresent());
-		Collection<ProcessInstance> processInstances = instances.get().getProcessInstances();
-		for (ProcessInstance processInstance : processInstances) {
-			assertTrue(client.getProcessInstance(containerId, processInstance.getIntstanceId()).isPresent());
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, 1, 999, null, null);
+		assertTrue(defs.isPresent());
+		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
+		for (ProcessDefinition def : processDefinitions) {
+			System.out.println(def.getId());
 		}
 	}
+
 }

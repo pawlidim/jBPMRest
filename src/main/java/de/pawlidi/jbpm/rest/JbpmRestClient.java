@@ -9,9 +9,13 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.pawlidi.jbpm.rest.data.Containers;
 import de.pawlidi.jbpm.rest.data.KieServerService;
+import de.pawlidi.jbpm.rest.data.ProcessDefinitions;
 import de.pawlidi.jbpm.rest.data.ProcessInstance;
+import de.pawlidi.jbpm.rest.data.ProcessInstanceStatus;
 import de.pawlidi.jbpm.rest.data.ProcessInstances;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -41,6 +45,9 @@ public class JbpmRestClient {
 	 */
 	public JbpmRestClient(final String url, final String username, final String password) {
 		super();
+		if (StringUtils.isBlank(url) || StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+			throw new IllegalArgumentException("Invalid jbpm client parameters!");
+		}
 		this.retrofit = RetrofitFactory.createRetrofit(url + BASE_PATH, username, password);
 		this.service = retrofit.create(KieServerService.class);
 	}
@@ -67,8 +74,38 @@ public class JbpmRestClient {
 	 * @param containerId
 	 * @return
 	 */
-	public Optional<ProcessInstances> getProcessInstances(String containerId) {
-		Call<ProcessInstances> call = service.getProcessInstances(containerId);
+	public Optional<ProcessDefinitions> getProcessDefinitions(String containerId, Integer page, Integer pageSize,
+			String sort, Boolean sortOrder) {
+		// check container id
+		if (StringUtils.isBlank(containerId)) {
+			return Optional.empty();
+		}
+
+		Call<ProcessDefinitions> call = service.getProcessDefinitions(containerId, page, pageSize, sort, sortOrder);
+		try {
+			Response<ProcessDefinitions> response = call.execute();
+			if (response.isSuccessful()) {
+				return Optional.of(response.body());
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not get process definitions", e);
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @return
+	 */
+	public Optional<ProcessInstances> getProcessInstances(String containerId, Integer page, Integer pageSize,
+			String sort, Boolean sortOrder, ProcessInstanceStatus status) {
+		// check container id
+		if (StringUtils.isBlank(containerId)) {
+			return Optional.empty();
+		}
+		Call<ProcessInstances> call = service.getProcessInstances(containerId, page, pageSize, sort, sortOrder,
+				status.ordinal());
 		try {
 			Response<ProcessInstances> response = call.execute();
 			if (response.isSuccessful()) {
@@ -99,6 +136,11 @@ public class JbpmRestClient {
 	 */
 	public Optional<ProcessInstance> getProcessInstance(String containerId, String processInstanceId,
 			Boolean withVars) {
+		// check container id
+		if (StringUtils.isBlank(containerId) || StringUtils.isBlank(processInstanceId)) {
+			return Optional.empty();
+		}
+
 		Call<ProcessInstance> call = service.getProcessInstance(containerId, processInstanceId, withVars);
 		try {
 			Response<ProcessInstance> response = call.execute();
@@ -111,7 +153,18 @@ public class JbpmRestClient {
 		return Optional.empty();
 	}
 
+	/**
+	 * 
+	 * @param containerId
+	 * @param processId
+	 * @param vars
+	 * @return
+	 */
 	public Optional<Long> startProcess(String containerId, String processId, Map<String, String> vars) {
+		// check container id
+		if (StringUtils.isBlank(containerId) || StringUtils.isBlank(processId)) {
+			return Optional.empty();
+		}
 		Call<Long> call = service.startProcess(containerId, processId, vars);
 		try {
 			Response<Long> response = call.execute();

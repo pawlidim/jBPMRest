@@ -5,7 +5,6 @@ package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,22 +19,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessInstance implements Serializable {
 
-	@JsonProperty("process-instance-id")
-	private String intstanceId;
 	@JsonProperty("process-id")
 	private String processId;
 	@JsonProperty("process-name")
 	private String name;
 	@JsonProperty("process-version")
 	private String version;
+	@JsonProperty("process-instance-id")
+	private String intstanceId;
 	@JsonProperty("process-instance-state")
 	private ProcessInstanceStatus status;
 	@JsonProperty("container-id")
 	private String containerId;
 	@JsonProperty("initiator")
 	private String initiator;
-	// @JsonProperty("start-date")
-	private Date startDate;
+	@JsonProperty("start-date")
+	private String startDate;
 	@JsonProperty("process-instance-desc")
 	private String description;
 	@JsonProperty("correlation-key")
@@ -48,6 +47,8 @@ public class ProcessInstance implements Serializable {
 	@JsonProperty("process-instance-variables")
 	@JsonFormat(with = JsonFormat.Feature.WRITE_SORTED_MAP_ENTRIES)
 	private Map<String, String> variables;
+	@JsonProperty("active-user-tasks")
+	private TaskSummaryList taskSummaryList;
 
 	/**
 	 * 
@@ -157,14 +158,14 @@ public class ProcessInstance implements Serializable {
 	/**
 	 * @return the startDate
 	 */
-	public Date getStartDate() {
+	public String getStartDate() {
 		return startDate;
 	}
 
 	/**
 	 * @param startDate the startDate to set
 	 */
-	public void setStartDate(Date startDate) {
+	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
 
@@ -236,6 +237,20 @@ public class ProcessInstance implements Serializable {
 	 */
 	public void setVariables(Map<String, String> variables) {
 		this.variables = variables;
+	}
+
+	/**
+	 * @return the taskSummaryList
+	 */
+	public TaskSummaryList getTaskSummaryList() {
+		return taskSummaryList;
+	}
+
+	/**
+	 * @param taskSummaryList the taskSummaryList to set
+	 */
+	public void setTaskSummaryList(TaskSummaryList taskSummaryList) {
+		this.taskSummaryList = taskSummaryList;
 	}
 
 	@Override

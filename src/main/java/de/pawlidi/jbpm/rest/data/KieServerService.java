@@ -28,14 +28,20 @@ public interface KieServerService {
 	Call<Containers> getContainers();
 
 	/**
-	 * Returns a list of process instances in a specified KIE container.
+	 * Returns a list of process definitions in a specified KIE container.
 	 * 
-	 * @param containerId
+	 * @param containerId container id that process instance belongs to
+	 * @param page        optional pagination - at which page to start, defaults to
+	 *                    0 (meaning first)
+	 * @param pageSize    optional pagination - size of the result, defaults to 10
+	 * @param sort        optional sort column, no default
+	 * @param sortOrder   optional sort direction (asc, desc) - defaults to asc
 	 * @return
 	 */
 	@Headers({ "accept: application/json" })
-	@GET("server/containers/{containerId}/processes/instances")
-	Call<ProcessInstances> getProcessInstances(@Path("containerId") String containerId);
+	@GET("server/containers/{containerId}/processes")
+	Call<ProcessDefinitions> getProcessDefinitions(@Path("containerId") String containerId, @Query("page") Integer page,
+			@Query("pageSize") Integer pageSize, @Query("sort") String sort, @Query("sortOrder") Boolean sortOrder);
 
 	/**
 	 * Returns a list of process instances in a specified KIE container.
@@ -54,7 +60,7 @@ public interface KieServerService {
 	@GET("server/containers/{containerId}/processes/instances")
 	Call<ProcessInstances> getProcessInstances(@Path("containerId") String containerId, @Query("page") Integer page,
 			@Query("pageSize") Integer pageSize, @Query("sort") String sort, @Query("sortOrder") Boolean sortOrder,
-			@Query("status") ProcessInstanceStatus status);
+			@Query("status") int status);
 
 	/**
 	 * Returns information about a specified process instance in a specified KIE
