@@ -4,7 +4,6 @@
 package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,7 +32,7 @@ public class ProcessInstance implements Serializable {
 	private String containerId;
 	@JsonProperty("initiator")
 	private String initiator;
-	@JsonProperty("start-date")
+	// @JsonProperty("start-date")
 	private String startDate;
 	@JsonProperty("process-instance-desc")
 	private String description;
@@ -41,9 +40,6 @@ public class ProcessInstance implements Serializable {
 	private String correlationKey;
 	@JsonProperty("parent-instance-id")
 	private String parentInstanceId;
-	@JsonProperty("active-user-tasks")
-	@JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-	private Collection<Taks> tasks;
 	@JsonProperty("process-instance-variables")
 	@JsonFormat(with = JsonFormat.Feature.WRITE_SORTED_MAP_ENTRIES)
 	private Map<String, String> variables;
@@ -209,20 +205,6 @@ public class ProcessInstance implements Serializable {
 	 */
 	public void setParentInstanceId(String parentInstanceId) {
 		this.parentInstanceId = parentInstanceId;
-	}
-
-	/**
-	 * @return the tasks
-	 */
-	public Collection<Taks> getTasks() {
-		return tasks;
-	}
-
-	/**
-	 * @param tasks the tasks to set
-	 */
-	public void setTasks(Collection<Taks> tasks) {
-		this.tasks = tasks;
 	}
 
 	/**

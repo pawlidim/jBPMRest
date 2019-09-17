@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.After;
@@ -16,19 +18,31 @@ import de.pawlidi.jbpm.rest.data.ContainerData;
 import de.pawlidi.jbpm.rest.data.Containers;
 import de.pawlidi.jbpm.rest.data.ProcessDefinition;
 import de.pawlidi.jbpm.rest.data.ProcessDefinitions;
+import de.pawlidi.jbpm.rest.data.ProcessInstance;
 import de.pawlidi.jbpm.rest.data.ProcessInstanceStatus;
 import de.pawlidi.jbpm.rest.data.ProcessInstances;
 
+/**
+ * 
+ * @author PAWLIDIM
+ *
+ */
 public class JbpmRestClientTest {
 
 	private static final String URL = "http://localhost:8181";
 	private static final String USER = "wbadmin";
 	private static final String PASSWORD = "wbadmin";
 	private JbpmRestClient client;
+	private Map<String, String> processParams;
 
 	@Before
 	public void setUp() throws Exception {
 		client = new JbpmRestClient(URL, USER, PASSWORD);
+		processParams = new HashMap<>();
+		processParams.put("key", "myAppTest");
+		processParams.put("actorId", "Test app");
+		processParams.put("result", "Test result");
+		processParams.put("decision", "Task decision");
 	}
 
 	@After
@@ -45,7 +59,7 @@ public class JbpmRestClientTest {
 		Collection<Container> elms = containers.get().getResult().getContainers();
 		for (Container container : elms) {
 			for (ContainerData data : container.getContainerDataList()) {
-				System.out.println(data.getId());
+				System.out.println("Container id " + data.getId());
 			}
 		}
 	}
@@ -63,9 +77,12 @@ public class JbpmRestClientTest {
 				break;
 			}
 		}
-		Optional<ProcessInstances> instances = client.getProcessInstances(containerId, 1, 999, null, null,
+		Optional<ProcessInstances> instances = client.getProcessInstances(containerId, null, 999, null, null,
 				ProcessInstanceStatus.Active);
 		assertTrue(instances.isPresent());
+		for (ProcessInstance inst : instances.get().getProcessInstances()) {
+			System.out.println("Process instance " + inst.getIntstanceId() + " = " + inst.getName());
+		}
 	}
 
 	@Test
@@ -81,11 +98,125 @@ public class JbpmRestClientTest {
 				break;
 			}
 		}
-		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, 1, 999, null, null);
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, null, 999, null, null);
 		assertTrue(defs.isPresent());
 		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
 		for (ProcessDefinition def : processDefinitions) {
 			System.out.println(def.getId());
+		}
+	}
+
+	@Test
+	public void startProcess() {
+		Optional<Containers> containers = client.getContainers();
+		assertTrue(containers.isPresent());
+		assertFalse(containers.get().getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.get().getResult().getContainers();
+		String containerId = null;
+		String processId = null;
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				containerId = data.getId();
+				break;
+			}
+		}
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, null, 999, null, null);
+		assertTrue(defs.isPresent());
+		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
+		for (ProcessDefinition def : processDefinitions) {
+			processId = def.getId();
+			break;
+		}
+		Optional<Integer> instanceId = client.startProcess(containerId, processId, processParams);
+		assertTrue(instanceId.isPresent());
+		assertTrue(client.abortProcessInstance(containerId, instanceId.get()));
+	}
+
+	@Test
+	public void testUpdateVariables() {
+		processParams.put("key", "NewMyAppTest");
+		Optional<Containers> containers = client.getContainers();
+		assertTrue(containers.isPresent());
+		assertFalse(containers.get().getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.get().getResult().getContainers();
+		String containerId = null;
+		String processId = null;
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				containerId = data.getId();
+				break;
+			}
+		}
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, null, 999, null, null);
+		assertTrue(defs.isPresent());
+		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
+		for (ProcessDefinition def : processDefinitions) {
+			processId = def.getId();
+			break;
+		}
+		Optional<Integer> instanceId = client.startProcess(containerId, processId, processParams);
+		assertTrue(instanceId.isPresent());
+		assertTrue(client.updateVariables(containerId, instanceId.get(), processParams));
+	}
+
+	@Test
+	public void testAllVariables() {
+		processParams.put("key", "NewMyAppTest");
+		Optional<Containers> containers = client.getContainers();
+		assertTrue(containers.isPresent());
+		assertFalse(containers.get().getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.get().getResult().getContainers();
+		String containerId = null;
+		String processId = null;
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				containerId = data.getId();
+				break;
+			}
+		}
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, null, 999, null, null);
+		assertTrue(defs.isPresent());
+		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
+		for (ProcessDefinition def : processDefinitions) {
+			processId = def.getId();
+			break;
+		}
+		Optional<Integer> instanceId = client.startProcess(containerId, processId, processParams);
+		assertTrue(instanceId.isPresent());
+		assertTrue(client.updateVariables(containerId, instanceId.get(), processParams));
+
+		Optional<Map<String, String>> fromServer = client.getProcessVariables(containerId, instanceId.get());
+		assertTrue(fromServer.isPresent());
+		assertTrue(fromServer.get().get("key").equals("NewMyAppTest"));
+	}
+
+	@Test
+	public void testProcessInstancesByInitiator() {
+		Optional<Containers> containers = client.getContainers();
+		assertTrue(containers.isPresent());
+		assertFalse(containers.get().getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.get().getResult().getContainers();
+		String containerId = null;
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				containerId = data.getId();
+				break;
+			}
+		}
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, null, 999, null, null);
+		assertTrue(defs.isPresent());
+		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
+		String processName = null;
+		for (ProcessDefinition def : processDefinitions) {
+			processName = def.getName();
+			break;
+		}
+		Optional<ProcessInstances> instances = client.getProcessInstancesForInitiator(USER, null, 999, processName,
+				null, null, ProcessInstanceStatus.Active);
+		assertTrue(instances.isPresent());
+		for (ProcessInstance inst : instances.get().getProcessInstances()) {
+			System.out.println(
+					"Process instance for user " + USER + " >> " + inst.getIntstanceId() + " = " + inst.getName());
 		}
 	}
 

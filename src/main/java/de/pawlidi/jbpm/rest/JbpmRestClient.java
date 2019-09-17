@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import de.pawlidi.jbpm.rest.data.Containers;
@@ -105,7 +106,38 @@ public class JbpmRestClient {
 			return Optional.empty();
 		}
 		Call<ProcessInstances> call = service.getProcessInstances(containerId, page, pageSize, sort, sortOrder,
-				status.ordinal());
+				status.getStatus());
+		try {
+			Response<ProcessInstances> response = call.execute();
+			if (response.isSuccessful()) {
+				return Optional.of(response.body());
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not get process instances", e);
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * 
+	 * @param initiator
+	 * @param page
+	 * @param pageSize
+	 * @param processName
+	 * @param sort
+	 * @param sortOrder
+	 * @param status
+	 * @return
+	 */
+	public Optional<ProcessInstances> getProcessInstancesForInitiator(String initiator, Integer page, Integer pageSize,
+			String processName, String sort, Boolean sortOrder, ProcessInstanceStatus status) {
+		if (StringUtils.isBlank(initiator) || StringUtils.isBlank(processName) || status == null) {
+			return Optional.empty();
+		}
+
+		Call<ProcessInstances> call = service.getProcessInstancesForInitiator(initiator, page, pageSize, processName,
+				sort, sortOrder, status.getStatus());
+
 		try {
 			Response<ProcessInstances> response = call.execute();
 			if (response.isSuccessful()) {
@@ -123,7 +155,7 @@ public class JbpmRestClient {
 	 * @param processInstanceId
 	 * @return
 	 */
-	public Optional<ProcessInstance> getProcessInstance(String containerId, String processInstanceId) {
+	public Optional<ProcessInstance> getProcessInstance(String containerId, Integer processInstanceId) {
 		return getProcessInstance(containerId, processInstanceId, true);
 	}
 
@@ -134,10 +166,10 @@ public class JbpmRestClient {
 	 * @param withVars
 	 * @return
 	 */
-	public Optional<ProcessInstance> getProcessInstance(String containerId, String processInstanceId,
+	public Optional<ProcessInstance> getProcessInstance(String containerId, Integer processInstanceId,
 			Boolean withVars) {
 		// check container id
-		if (StringUtils.isBlank(containerId) || StringUtils.isBlank(processInstanceId)) {
+		if (StringUtils.isBlank(containerId) || processInstanceId == null) {
 			return Optional.empty();
 		}
 
@@ -160,14 +192,14 @@ public class JbpmRestClient {
 	 * @param vars
 	 * @return
 	 */
-	public Optional<Long> startProcess(String containerId, String processId, Map<String, String> vars) {
+	public Optional<Integer> startProcess(String containerId, String process, Map<String, String> vars) {
 		// check container id
-		if (StringUtils.isBlank(containerId) || StringUtils.isBlank(processId)) {
+		if (StringUtils.isBlank(containerId) || StringUtils.isBlank(process)) {
 			return Optional.empty();
 		}
-		Call<Long> call = service.startProcess(containerId, processId, vars);
+		Call<Integer> call = service.startProcess(containerId, process, vars);
 		try {
-			Response<Long> response = call.execute();
+			Response<Integer> response = call.execute();
 			if (response.isSuccessful()) {
 				return Optional.of(response.body());
 			}
@@ -176,4 +208,72 @@ public class JbpmRestClient {
 		}
 		return Optional.empty();
 	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param processInstanceId
+	 * @return
+	 */
+	public boolean abortProcessInstance(String containerId, Integer processInstanceId) {
+		if (StringUtils.isBlank(containerId) || processInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.abortProcessInstance(containerId, processInstanceId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not abort process", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param processInstanceId
+	 * @param variables
+	 * @return
+	 */
+	public boolean updateVariables(String containerId, Integer processInstanceId, Map<String, String> variables) {
+		if (StringUtils.isBlank(containerId) || processInstanceId == null || MapUtils.isEmpty(variables)) {
+			return false;
+		}
+		Call<Void> call = service.updateVariables(containerId, processInstanceId, variables);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not update process variables", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param processInstanceId
+	 * @return
+	 */
+	public Optional<Map<String, String>> getProcessVariables(String containerId, Integer processInstanceId) {
+		if (StringUtils.isBlank(containerId) || processInstanceId == null) {
+			return Optional.empty();
+		}
+		Call<Map<String, String>> call = service.getAllVariables(containerId, processInstanceId);
+		try {
+			Response<Map<String, String>> response = call.execute();
+			if (response.isSuccessful()) {
+				return Optional.of(response.body());
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not update process variables", e);
+		}
+		return Optional.empty();
+	}
+
 }
