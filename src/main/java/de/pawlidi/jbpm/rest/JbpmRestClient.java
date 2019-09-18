@@ -4,11 +4,13 @@
 package de.pawlidi.jbpm.rest;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,6 +20,11 @@ import de.pawlidi.jbpm.rest.data.ProcessDefinitions;
 import de.pawlidi.jbpm.rest.data.ProcessInstance;
 import de.pawlidi.jbpm.rest.data.ProcessInstanceStatus;
 import de.pawlidi.jbpm.rest.data.ProcessInstances;
+import de.pawlidi.jbpm.rest.data.TaskComment;
+import de.pawlidi.jbpm.rest.data.TaskComments;
+import de.pawlidi.jbpm.rest.data.TaskStatus;
+import de.pawlidi.jbpm.rest.data.TaskSummary;
+import de.pawlidi.jbpm.rest.data.TaskSummaryList;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -32,10 +39,17 @@ import retrofit2.Retrofit;
 public class JbpmRestClient {
 
 	private static final Logger log = Logger.getLogger(JbpmRestClient.class.getName());
-
 	private static final String BASE_PATH = "/kie-server/services/rest/";
+
 	private Retrofit retrofit;
 	private KieServerService service;
+
+	/**
+	 * Invisible constructor.
+	 */
+	protected JbpmRestClient() {
+		super();
+	}
 
 	/**
 	 * Default constructor for jbpm rest client.
@@ -54,6 +68,7 @@ public class JbpmRestClient {
 	}
 
 	/**
+	 * Returns a list of all containers.
 	 * 
 	 * @return
 	 */
@@ -105,8 +120,9 @@ public class JbpmRestClient {
 		if (StringUtils.isBlank(containerId)) {
 			return Optional.empty();
 		}
+		Integer ordinalStatus = status != null ? status.getStatus() : null;
 		Call<ProcessInstances> call = service.getProcessInstances(containerId, page, pageSize, sort, sortOrder,
-				status.getStatus());
+				ordinalStatus);
 		try {
 			Response<ProcessInstances> response = call.execute();
 			if (response.isSuccessful()) {
@@ -131,12 +147,13 @@ public class JbpmRestClient {
 	 */
 	public Optional<ProcessInstances> getProcessInstancesForInitiator(String initiator, Integer page, Integer pageSize,
 			String processName, String sort, Boolean sortOrder, ProcessInstanceStatus status) {
-		if (StringUtils.isBlank(initiator) || StringUtils.isBlank(processName) || status == null) {
+		if (StringUtils.isBlank(initiator) || StringUtils.isBlank(processName)) {
 			return Optional.empty();
 		}
+		Integer ordinalStatus = status != null ? status.getStatus() : null;
 
 		Call<ProcessInstances> call = service.getProcessInstancesForInitiator(initiator, page, pageSize, processName,
-				sort, sortOrder, status.getStatus());
+				sort, sortOrder, ordinalStatus);
 
 		try {
 			Response<ProcessInstances> response = call.execute();
@@ -276,4 +293,391 @@ public class JbpmRestClient {
 		return Optional.empty();
 	}
 
+	/**
+	 * 
+	 * @param processInstanceId
+	 * @param page
+	 * @param pageSize
+	 * @param sort
+	 * @param sortOrder
+	 * @param status
+	 * @return
+	 */
+	public Optional<TaskSummaryList> getTasksForInstance(Integer processInstanceId, Integer page, Integer pageSize,
+			String sort, Boolean sortOrder, TaskStatus status) {
+		if (processInstanceId == null) {
+			return Optional.empty();
+		}
+		Integer ordinalStatus = status != null ? status.ordinal() : null;
+		Call<TaskSummaryList> call = service.getTasksForInstance(processInstanceId, page, pageSize, sort, sortOrder,
+				ordinalStatus);
+		try {
+			Response<TaskSummaryList> response = call.execute();
+			if (response.isSuccessful()) {
+				return Optional.ofNullable(response.body());
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not load tasks for instance", e);
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param withAssignments
+	 * @param withInputData
+	 * @param withOutputData
+	 * @return
+	 */
+	public Optional<TaskSummary> getTaskById(String containerId, Integer taskInstanceId, Boolean withAssignments,
+			Boolean withInputData, Boolean withOutputData) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return Optional.empty();
+		}
+		Call<TaskSummary> call = service.getTaskById(containerId, taskInstanceId, withAssignments, withInputData,
+				withOutputData);
+		try {
+			Response<TaskSummary> response = call.execute();
+			if (response.isSuccessful()) {
+				return Optional.ofNullable(response.body());
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not load tasks for task instance", e);
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param comment
+	 * @return
+	 */
+	public Optional<Integer> addComment(String containerId, Integer taskInstanceId, TaskComment comment) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null || comment == null) {
+			return Optional.empty();
+		}
+		Call<Integer> call = service.addComment(containerId, taskInstanceId, comment);
+		try {
+			Response<Integer> response = call.execute();
+			if (response.isSuccessful()) {
+				return Optional.ofNullable(response.body());
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not add comment", e);
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @return
+	 */
+	public Optional<TaskComments> getComments(String containerId, Integer taskInstanceId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return Optional.empty();
+		}
+		Call<TaskComments> call = service.getComments(containerId, taskInstanceId);
+		try {
+			Response<TaskComments> response = call.execute();
+			if (response.isSuccessful()) {
+				return Optional.ofNullable(response.body());
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not get comments", e);
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @return
+	 */
+	public boolean activateTask(String containerId, Integer taskInstanceId, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.activateTask(containerId, taskInstanceId, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not activate task", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @return
+	 */
+	public boolean claimTask(String containerId, Integer taskInstanceId, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.claimTask(containerId, taskInstanceId, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not claim task", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param autoProgress
+	 * @param actorId
+	 * @param vars
+	 * @return
+	 */
+	public boolean completeTask(String containerId, Integer taskInstanceId, Boolean autoProgress, String actorId,
+			Map<String, String> vars) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.completeTask(containerId, taskInstanceId, autoProgress, actorId, vars);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not complete task", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param targetUser
+	 * @param actorId
+	 * @return
+	 */
+	public boolean delegateTask(String containerId, Integer taskInstanceId, String targetUser, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null || StringUtils.isBlank(targetUser)) {
+			return false;
+		}
+		Call<Void> call = service.delegateTask(containerId, taskInstanceId, targetUser, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not delegate task", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @return
+	 */
+	public boolean exitTask(String containerId, Integer taskInstanceId, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.exitTask(containerId, taskInstanceId, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not exit task", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @param vars
+	 * @return
+	 */
+	public boolean failTask(String containerId, Integer taskInstanceId, String actorId, Map<String, String> vars) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.failTask(containerId, taskInstanceId, actorId, vars);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not fail task", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param targetUser
+	 * @param actorId
+	 * @return
+	 */
+	public boolean forwardTask(String containerId, Integer taskInstanceId, String targetUser, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null || StringUtils.isBlank(targetUser)) {
+			return false;
+		}
+		Call<Void> call = service.forwardTask(containerId, taskInstanceId, targetUser, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not forward task", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param owners
+	 * @param actorId
+	 * @return
+	 */
+	public boolean nominateTask(String containerId, Integer taskInstanceId, List<String> owners, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null || CollectionUtils.isEmpty(owners)) {
+			return false;
+		}
+		Call<Void> call = service.nominateTask(containerId, taskInstanceId, owners, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not forward task", e);
+		}
+		return false;
+	}
+
+	public boolean releaseTask(String containerId, Integer taskInstanceId, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.releaseTask(containerId, taskInstanceId, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not release task", e);
+		}
+		return false;
+	}
+
+	public boolean resumeTask(String containerId, Integer taskInstanceId, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.resumeTask(containerId, taskInstanceId, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not resume task", e);
+		}
+		return false;
+	}
+
+	public boolean skipTask(String containerId, Integer taskInstanceId, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.skipTask(containerId, taskInstanceId, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not skip task", e);
+		}
+		return false;
+	}
+
+	public boolean startTask(String containerId, Integer taskInstanceId, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.startTask(containerId, taskInstanceId, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not start task", e);
+		}
+		return false;
+	}
+
+	public boolean stopTask(String containerId, Integer taskInstanceId, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.stopTask(containerId, taskInstanceId, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not stop task", e);
+		}
+		return false;
+	}
+
+	public boolean suspendTask(String containerId, Integer taskInstanceId, String actorId) {
+		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
+			return false;
+		}
+		Call<Void> call = service.suspendTask(containerId, taskInstanceId, actorId);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not suspend task", e);
+		}
+		return false;
+	}
 }

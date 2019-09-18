@@ -1,5 +1,6 @@
 package de.pawlidi.jbpm.rest.data;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -8,6 +9,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -61,7 +63,7 @@ public interface KieServerService {
 	@GET("server/containers/{containerId}/processes/instances")
 	Call<ProcessInstances> getProcessInstances(@Path("containerId") String containerId, @Query("page") Integer page,
 			@Query("pageSize") Integer pageSize, @Query("sort") String sort, @Query("sortOrder") Boolean sortOrder,
-			@Query("status") int status);
+			@Query("status") Integer status);
 
 	/**
 	 * Returns information about a specified process instance in a specified KIE
@@ -97,7 +99,7 @@ public interface KieServerService {
 	@GET("server/queries/processes/instances")
 	Call<ProcessInstances> getProcessInstancesForInitiator(@Query("initiator") String initiator,
 			@Query("page") Integer page, @Query("pageSize") Integer pageSize, @Query("processName") String processName,
-			@Query("sort") String sort, @Query("sortOrder") Boolean sortOrder, @Query("status") int status);
+			@Query("sort") String sort, @Query("sortOrder") Boolean sortOrder, @Query("status") Integer status);
 
 	/**
 	 * Aborts a specified process instance in a specified KIE container.
@@ -173,7 +175,7 @@ public interface KieServerService {
 	@GET("server/queries/tasks/instances/process/{processInstanceId}")
 	Call<TaskSummaryList> getTasksForInstance(@Path("processInstanceId") Integer processInstanceId,
 			@Query("page") Integer page, @Query("pageSize") Integer pageSize, @Query("sort") String sort,
-			@Query("sortOrder") Boolean sortOrder, @Query("status") int statu);
+			@Query("sortOrder") Boolean sortOrder, @Query("status") Integer status);
 
 	/**
 	 * Returns information about a specified task instance.
@@ -199,10 +201,237 @@ public interface KieServerService {
 	 * @param taskInstanceId identifier of the task instance that comment should be
 	 *                       added to
 	 * @param comment        comment data as TaskComment
-	 * @return
+	 * @return comment id
 	 */
 	@Headers({ "accept: application/json" })
 	@POST("server/containers/{containerId}/tasks/{taskInstanceId}/comments")
 	Call<Integer> addComment(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
 			@Body TaskComment comment);
+
+	/**
+	 * Returns all comments in a specified task instance.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that comments should be
+	 *                       loaded for
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@GET("server/containers/{containerId}/tasks/{taskInstanceId}/comments")
+	Call<TaskComments> getComments(@Path("containerId") String containerId,
+			@Path("taskInstanceId") Integer taskInstanceId);
+
+	/**
+	 * Activates a specified task instance to be progressed.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be
+	 *                       activated
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/activated")
+	Call<Void> activateTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId);
+
+	/**
+	 * Claims (reserves) a specified task instance for the user sending the request.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be claimed
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/claimed")
+	Call<Void> claimTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId);
+
+	/**
+	 * Completes a specified task instance.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be
+	 *                       completed
+	 * @param autoProgress   optional flag that allows to directlu claim and start
+	 *                       task (if needed) before completion
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @param vars           optional map of output variables
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/completed")
+	Call<Void> completeTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("auto-progress") Boolean autoProgress, @Query("user") String actorId,
+			@Body Map<String, String> vars);
+
+	/**
+	 * Delegates a specified task instance to a specified target user as the new
+	 * task owner.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be
+	 *                       delegated
+	 * @param targetUser     user that task should be dalegated to
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/delegated")
+	Call<Void> delegateTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("targetUser") String targetUser, @Query("user") String actorId);
+
+	/**
+	 * Exits a specified task instance.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be exited
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/exited")
+	Call<Void> exitTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId);
+
+	/**
+	 * Fails a specified task instance.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be failed
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @param vars           optional map of output variables
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/failed")
+	Call<Void> failTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId, @Body Map<String, String> vars);
+
+	/**
+	 * Forwards a specified task instance to a specified target user for review or
+	 * for suggested delegation.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be
+	 *                       delegated
+	 * @param targetUser     user that the task should be forwarded to
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/forwarded")
+	Call<Void> forwardTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("targetUser") String targetUser, @Query("user") String actorId);
+
+	/**
+	 * Nominates one or more potential owners to whom the task instance should be
+	 * assigned.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be
+	 *                       nominated
+	 * @param potOwners      list of users that the task should be nominated to
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/nominated")
+	Call<Void> nominateTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("potOwner[]") List<String> potOwners, @Query("user") String actorId);
+
+	/**
+	 * Releases a specified task instance from being claimed by the task owner.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be released
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/released")
+	Call<Void> releaseTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId);
+
+	/**
+	 * Resumes a specified task instance.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be resumed
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/resumed")
+	Call<Void> resumeTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId);
+
+	/**
+	 * Skips a specified task instance within the sequence of tasks in the process
+	 * instance
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be skipped
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/resumed")
+	Call<Void> skipTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId);
+
+	/**
+	 * Starts a specified task instance.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be started
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/started")
+	Call<Void> startTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId);
+
+	/**
+	 * Stops a specified task instance.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be stopped
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/stopped")
+	Call<Void> stopTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId);
+
+	/**
+	 * Suspends a specified task instance.
+	 * 
+	 * @param containerId    container id that task instance belongs to
+	 * @param taskInstanceId identifier of the task instance that should be
+	 *                       suspended
+	 * @param actorId        optional user id to be used instead of authenticated
+	 *                       user - only when bypass authenticated user is enabled
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/suspended")
+	Call<Void> suspendTask(@Path("containerId") String containerId, @Path("taskInstanceId") Integer taskInstanceId,
+			@Query("user") String actorId);
 }

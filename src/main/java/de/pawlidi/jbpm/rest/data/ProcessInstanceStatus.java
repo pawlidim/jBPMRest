@@ -7,7 +7,7 @@ package de.pawlidi.jbpm.rest.data;
  */
 public enum ProcessInstanceStatus {
 
-	Active(1), Completed(2), Aborted(3);
+	Pending(0), Active(1), Completed(2), Aborted(3), Suspended(4);
 
 	private final int status;
 

@@ -2,19 +2,17 @@ package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TaskComment implements Serializable {
 	@JsonProperty("comment-id")
 	private Long id;
-
 	@JsonProperty("comment")
 	private String text;
-
 	@JsonProperty("comment-added-by")
 	private String addedBy;
-
 	@JsonProperty("comment-added-at")
 	private Date addedAt;
 
@@ -72,6 +70,24 @@ public class TaskComment implements Serializable {
 	 */
 	public void setAddedAt(Date addedAt) {
 		this.addedAt = addedAt;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(addedAt, addedBy, id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof TaskComment)) {
+			return false;
+		}
+		TaskComment other = (TaskComment) obj;
+		return Objects.equals(addedAt, other.addedAt) && Objects.equals(addedBy, other.addedBy)
+				&& Objects.equals(id, other.id);
 	}
 
 }

@@ -24,7 +24,7 @@ public class TaskSummary implements Serializable {
 	@JsonProperty("task-description")
 	private String description;
 	@JsonProperty("task-status")
-	private String status;
+	private TaskStatus status;
 	@JsonProperty("task-priority")
 	private Integer priority;
 	@JsonProperty("task-is-skipable")
@@ -33,11 +33,11 @@ public class TaskSummary implements Serializable {
 	private String actualOwner;
 	@JsonProperty("task-created-by")
 	private String createdBy;
-	@JsonProperty("task-created-on")
+	// @JsonProperty("task-created-on")
 	private Date createdOn;
-	@JsonProperty("task-activation-time")
+	// @JsonProperty("task-activation-time")
 	private Date activationTime;
-	@JsonProperty("task-expiration-time")
+	// @JsonProperty("task-expiration-time")
 	private Date expirationTime;
 	@JsonProperty("task-proc-inst-id")
 	private Long processInstanceId;
@@ -111,14 +111,14 @@ public class TaskSummary implements Serializable {
 	/**
 	 * @return the status
 	 */
-	public String getStatus() {
+	public TaskStatus getStatus() {
 		return status;
 	}
 
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(String status) {
+	public void setStatus(TaskStatus status) {
 		this.status = status;
 	}
 

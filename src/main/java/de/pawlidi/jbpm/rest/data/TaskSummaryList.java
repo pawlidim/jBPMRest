@@ -1,7 +1,7 @@
 package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,24 +12,24 @@ public class TaskSummaryList implements Serializable {
 
 	@JsonProperty("task-summary")
 	@JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-	private Collection<TaskSummary> processDefinitions;
+	private List<TaskSummary> taskSummaries;
 
 	public TaskSummaryList() {
 		super();
 	}
 
 	/**
-	 * @return the processDefinitions
+	 * @return the taskSummaries
 	 */
-	public Collection<TaskSummary> getProcessDefinitions() {
-		return processDefinitions;
+	public List<TaskSummary> getTaskSummaries() {
+		return taskSummaries;
 	}
 
 	/**
-	 * @param processDefinitions the processDefinitions to set
+	 * @param taskSummaries the taskSummaries to set
 	 */
-	public void setProcessDefinitions(Collection<TaskSummary> processDefinitions) {
-		this.processDefinitions = processDefinitions;
+	public void setTaskSummaries(List<TaskSummary> taskSummaries) {
+		this.taskSummaries = taskSummaries;
 	}
 
 }
