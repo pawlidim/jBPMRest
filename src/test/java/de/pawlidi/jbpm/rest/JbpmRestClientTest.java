@@ -22,6 +22,7 @@ import de.pawlidi.jbpm.rest.data.ProcessDefinitions;
 import de.pawlidi.jbpm.rest.data.ProcessInstance;
 import de.pawlidi.jbpm.rest.data.ProcessInstanceStatus;
 import de.pawlidi.jbpm.rest.data.ProcessInstances;
+import de.pawlidi.jbpm.rest.data.TaskStatus;
 import de.pawlidi.jbpm.rest.data.TaskSummary;
 import de.pawlidi.jbpm.rest.data.TaskSummaryList;
 
@@ -251,7 +252,7 @@ public class JbpmRestClientTest {
 			System.out.println(
 					"Process instance for user " + USER + " >> " + inst.getIntstanceId() + " = " + inst.getName());
 			Optional<TaskSummaryList> tasksResponse = client.getTasksForInstance(new Long(inst.getIntstanceId()), null,
-					999, null, null, null);
+					999, null, null, TaskStatus.Created);
 			assertTrue(tasksResponse.isPresent());
 			List<TaskSummary> taskSummaries = tasksResponse.get().getTaskSummaries();
 			assertNotNull(taskSummaries);

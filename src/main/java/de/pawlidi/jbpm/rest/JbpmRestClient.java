@@ -307,7 +307,7 @@ public class JbpmRestClient {
 		if (processInstanceId == null) {
 			return Optional.empty();
 		}
-		Integer ordinalStatus = status != null ? status.ordinal() : null;
+		String ordinalStatus = status != null ? status.getName() : null;
 		Call<TaskSummaryList> call = service.getTasksForInstance(processInstanceId, page, pageSize, sort, sortOrder,
 				ordinalStatus);
 		try {
