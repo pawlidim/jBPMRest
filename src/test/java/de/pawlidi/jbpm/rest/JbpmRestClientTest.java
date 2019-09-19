@@ -130,7 +130,7 @@ public class JbpmRestClientTest {
 			processId = def.getId();
 			break;
 		}
-		Optional<Integer> instanceId = client.startProcess(containerId, processId, processParams);
+		Optional<Long> instanceId = client.startProcess(containerId, processId, processParams);
 		assertTrue(instanceId.isPresent());
 		assertTrue(client.activateTask(containerId, instanceId.get(), USER));
 	}
@@ -157,7 +157,7 @@ public class JbpmRestClientTest {
 			processId = def.getId();
 			break;
 		}
-		Optional<Integer> instanceId = client.startProcess(containerId, processId, processParams);
+		Optional<Long> instanceId = client.startProcess(containerId, processId, processParams);
 		assertTrue(instanceId.isPresent());
 		assertTrue(client.updateVariables(containerId, instanceId.get(), processParams));
 	}
@@ -184,7 +184,7 @@ public class JbpmRestClientTest {
 			processId = def.getId();
 			break;
 		}
-		Optional<Integer> instanceId = client.startProcess(containerId, processId, processParams);
+		Optional<Long> instanceId = client.startProcess(containerId, processId, processParams);
 		assertTrue(instanceId.isPresent());
 		assertTrue(client.updateVariables(containerId, instanceId.get(), processParams));
 
@@ -250,8 +250,8 @@ public class JbpmRestClientTest {
 		for (ProcessInstance inst : instances.get().getProcessInstances()) {
 			System.out.println(
 					"Process instance for user " + USER + " >> " + inst.getIntstanceId() + " = " + inst.getName());
-			Optional<TaskSummaryList> tasksResponse = client.getTasksForInstance(new Integer(inst.getIntstanceId()),
-					null, 999, null, null, null);
+			Optional<TaskSummaryList> tasksResponse = client.getTasksForInstance(new Long(inst.getIntstanceId()), null,
+					999, null, null, null);
 			assertTrue(tasksResponse.isPresent());
 			List<TaskSummary> taskSummaries = tasksResponse.get().getTaskSummaries();
 			assertNotNull(taskSummaries);
@@ -260,6 +260,33 @@ public class JbpmRestClientTest {
 			}
 		}
 
+	}
+
+	@Test
+	public void testCompleteTask() {
+		Optional<Containers> containers = client.getContainers();
+		assertTrue(containers.isPresent());
+		assertFalse(containers.get().getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.get().getResult().getContainers();
+		String containerId = null;
+		String processId = null;
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				containerId = data.getId();
+				break;
+			}
+		}
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, null, 999, null, null);
+		assertTrue(defs.isPresent());
+		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
+		for (ProcessDefinition def : processDefinitions) {
+			processId = def.getId();
+			break;
+		}
+		Optional<Long> instanceId = client.startProcess(containerId, processId, processParams);
+		assertTrue(instanceId.isPresent());
+		assertTrue(client.activateTask(containerId, instanceId.get(), USER));
+		assertTrue(client.completeTask(containerId, instanceId.get(), true, USER, processParams));
 	}
 
 }

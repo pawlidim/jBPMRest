@@ -172,7 +172,7 @@ public class JbpmRestClient {
 	 * @param processInstanceId
 	 * @return
 	 */
-	public Optional<ProcessInstance> getProcessInstance(String containerId, Integer processInstanceId) {
+	public Optional<ProcessInstance> getProcessInstance(String containerId, Long processInstanceId) {
 		return getProcessInstance(containerId, processInstanceId, true);
 	}
 
@@ -183,8 +183,7 @@ public class JbpmRestClient {
 	 * @param withVars
 	 * @return
 	 */
-	public Optional<ProcessInstance> getProcessInstance(String containerId, Integer processInstanceId,
-			Boolean withVars) {
+	public Optional<ProcessInstance> getProcessInstance(String containerId, Long processInstanceId, Boolean withVars) {
 		// check container id
 		if (StringUtils.isBlank(containerId) || processInstanceId == null) {
 			return Optional.empty();
@@ -209,14 +208,14 @@ public class JbpmRestClient {
 	 * @param vars
 	 * @return
 	 */
-	public Optional<Integer> startProcess(String containerId, String process, Map<String, String> vars) {
+	public Optional<Long> startProcess(String containerId, String process, Map<String, String> vars) {
 		// check container id
 		if (StringUtils.isBlank(containerId) || StringUtils.isBlank(process)) {
 			return Optional.empty();
 		}
-		Call<Integer> call = service.startProcess(containerId, process, vars);
+		Call<Long> call = service.startProcess(containerId, process, vars);
 		try {
-			Response<Integer> response = call.execute();
+			Response<Long> response = call.execute();
 			if (response.isSuccessful()) {
 				return Optional.of(response.body());
 			}
@@ -232,7 +231,7 @@ public class JbpmRestClient {
 	 * @param processInstanceId
 	 * @return
 	 */
-	public boolean abortProcessInstance(String containerId, Integer processInstanceId) {
+	public boolean abortProcessInstance(String containerId, Long processInstanceId) {
 		if (StringUtils.isBlank(containerId) || processInstanceId == null) {
 			return false;
 		}
@@ -255,7 +254,7 @@ public class JbpmRestClient {
 	 * @param variables
 	 * @return
 	 */
-	public boolean updateVariables(String containerId, Integer processInstanceId, Map<String, String> variables) {
+	public boolean updateVariables(String containerId, Long processInstanceId, Map<String, String> variables) {
 		if (StringUtils.isBlank(containerId) || processInstanceId == null || MapUtils.isEmpty(variables)) {
 			return false;
 		}
@@ -277,7 +276,7 @@ public class JbpmRestClient {
 	 * @param processInstanceId
 	 * @return
 	 */
-	public Optional<Map<String, String>> getProcessVariables(String containerId, Integer processInstanceId) {
+	public Optional<Map<String, String>> getProcessVariables(String containerId, Long processInstanceId) {
 		if (StringUtils.isBlank(containerId) || processInstanceId == null) {
 			return Optional.empty();
 		}
@@ -303,7 +302,7 @@ public class JbpmRestClient {
 	 * @param status
 	 * @return
 	 */
-	public Optional<TaskSummaryList> getTasksForInstance(Integer processInstanceId, Integer page, Integer pageSize,
+	public Optional<TaskSummaryList> getTasksForInstance(Long processInstanceId, Integer page, Integer pageSize,
 			String sort, Boolean sortOrder, TaskStatus status) {
 		if (processInstanceId == null) {
 			return Optional.empty();
@@ -331,7 +330,7 @@ public class JbpmRestClient {
 	 * @param withOutputData
 	 * @return
 	 */
-	public Optional<TaskSummary> getTaskById(String containerId, Integer taskInstanceId, Boolean withAssignments,
+	public Optional<TaskSummary> getTaskById(String containerId, Long taskInstanceId, Boolean withAssignments,
 			Boolean withInputData, Boolean withOutputData) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return Optional.empty();
@@ -356,13 +355,13 @@ public class JbpmRestClient {
 	 * @param comment
 	 * @return
 	 */
-	public Optional<Integer> addComment(String containerId, Integer taskInstanceId, TaskComment comment) {
+	public Optional<Long> addComment(String containerId, Long taskInstanceId, TaskComment comment) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null || comment == null) {
 			return Optional.empty();
 		}
-		Call<Integer> call = service.addComment(containerId, taskInstanceId, comment);
+		Call<Long> call = service.addComment(containerId, taskInstanceId, comment);
 		try {
-			Response<Integer> response = call.execute();
+			Response<Long> response = call.execute();
 			if (response.isSuccessful()) {
 				return Optional.ofNullable(response.body());
 			}
@@ -378,7 +377,7 @@ public class JbpmRestClient {
 	 * @param taskInstanceId
 	 * @return
 	 */
-	public Optional<TaskComments> getComments(String containerId, Integer taskInstanceId) {
+	public Optional<TaskComments> getComments(String containerId, Long taskInstanceId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return Optional.empty();
 		}
@@ -401,7 +400,7 @@ public class JbpmRestClient {
 	 * @param actorId
 	 * @return
 	 */
-	public boolean activateTask(String containerId, Integer taskInstanceId, String actorId) {
+	public boolean activateTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
@@ -424,7 +423,7 @@ public class JbpmRestClient {
 	 * @param actorId
 	 * @return
 	 */
-	public boolean claimTask(String containerId, Integer taskInstanceId, String actorId) {
+	public boolean claimTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
@@ -449,7 +448,7 @@ public class JbpmRestClient {
 	 * @param vars
 	 * @return
 	 */
-	public boolean completeTask(String containerId, Integer taskInstanceId, Boolean autoProgress, String actorId,
+	public boolean completeTask(String containerId, Long taskInstanceId, Boolean autoProgress, String actorId,
 			Map<String, String> vars) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
@@ -474,7 +473,7 @@ public class JbpmRestClient {
 	 * @param actorId
 	 * @return
 	 */
-	public boolean delegateTask(String containerId, Integer taskInstanceId, String targetUser, String actorId) {
+	public boolean delegateTask(String containerId, Long taskInstanceId, String targetUser, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null || StringUtils.isBlank(targetUser)) {
 			return false;
 		}
@@ -497,7 +496,7 @@ public class JbpmRestClient {
 	 * @param actorId
 	 * @return
 	 */
-	public boolean exitTask(String containerId, Integer taskInstanceId, String actorId) {
+	public boolean exitTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
@@ -521,7 +520,7 @@ public class JbpmRestClient {
 	 * @param vars
 	 * @return
 	 */
-	public boolean failTask(String containerId, Integer taskInstanceId, String actorId, Map<String, String> vars) {
+	public boolean failTask(String containerId, Long taskInstanceId, String actorId, Map<String, String> vars) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
@@ -545,7 +544,7 @@ public class JbpmRestClient {
 	 * @param actorId
 	 * @return
 	 */
-	public boolean forwardTask(String containerId, Integer taskInstanceId, String targetUser, String actorId) {
+	public boolean forwardTask(String containerId, Long taskInstanceId, String targetUser, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null || StringUtils.isBlank(targetUser)) {
 			return false;
 		}
@@ -569,7 +568,7 @@ public class JbpmRestClient {
 	 * @param actorId
 	 * @return
 	 */
-	public boolean nominateTask(String containerId, Integer taskInstanceId, List<String> owners, String actorId) {
+	public boolean nominateTask(String containerId, Long taskInstanceId, List<String> owners, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null || CollectionUtils.isEmpty(owners)) {
 			return false;
 		}
@@ -585,7 +584,7 @@ public class JbpmRestClient {
 		return false;
 	}
 
-	public boolean releaseTask(String containerId, Integer taskInstanceId, String actorId) {
+	public boolean releaseTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
@@ -601,7 +600,7 @@ public class JbpmRestClient {
 		return false;
 	}
 
-	public boolean resumeTask(String containerId, Integer taskInstanceId, String actorId) {
+	public boolean resumeTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
@@ -617,7 +616,7 @@ public class JbpmRestClient {
 		return false;
 	}
 
-	public boolean skipTask(String containerId, Integer taskInstanceId, String actorId) {
+	public boolean skipTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
@@ -633,7 +632,7 @@ public class JbpmRestClient {
 		return false;
 	}
 
-	public boolean startTask(String containerId, Integer taskInstanceId, String actorId) {
+	public boolean startTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
@@ -649,7 +648,7 @@ public class JbpmRestClient {
 		return false;
 	}
 
-	public boolean stopTask(String containerId, Integer taskInstanceId, String actorId) {
+	public boolean stopTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
@@ -665,7 +664,7 @@ public class JbpmRestClient {
 		return false;
 	}
 
-	public boolean suspendTask(String containerId, Integer taskInstanceId, String actorId) {
+	public boolean suspendTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
 		}
