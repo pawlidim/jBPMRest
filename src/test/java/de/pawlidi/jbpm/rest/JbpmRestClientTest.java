@@ -290,4 +290,28 @@ public class JbpmRestClientTest {
 		assertTrue(client.completeTask(containerId, instanceId.get(), true, USER, processParams));
 	}
 
+	@Test
+	public void testClaimTask() {
+		Optional<Containers> containers = client.getContainers();
+		assertTrue(containers.isPresent());
+		assertFalse(containers.get().getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.get().getResult().getContainers();
+		String containerId = null;
+		String processId = null;
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				containerId = data.getId();
+				break;
+			}
+		}
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, null, 999, null, null);
+		assertTrue(defs.isPresent());
+		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
+		for (ProcessDefinition def : processDefinitions) {
+			processId = def.getId();
+			break;
+		}
+		assertTrue(client.claimTask(containerId, 62L, "pawlidim"));
+	}
+
 }

@@ -45,4 +45,9 @@ dependencies {
 
 Add jBPMRest jar file to your application classpath. The following example shows the basic usage of this library.
 
-TODO
+```
+private static final String URL = "http://localhost:8181";
+	private static final String USER = "wbadmin";
+	private static final String PASSWORD = "wbadmin";
+	
+```
