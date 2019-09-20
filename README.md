@@ -46,8 +46,18 @@ dependencies {
 Add jBPMRest jar file to your application classpath. The following example shows the basic usage of this library.
 
 ```
-private static final String URL = "http://localhost:8181";
-	private static final String USER = "wbadmin";
-	private static final String PASSWORD = "wbadmin";
-	
+final String URL = "http://localhost:8181";
+final String USER = "wbadmin";
+final String PASSWORD = "wbadmin";
+
+JbpmRestClient client = new JbpmRestClient(URL, USER, PASSWORD);
+
+// read all containers from jbpm server
+Optional<Containers> containers = client.getContainers();
+
+containerId = ..
+
+// read process instaces from container
+Optional<ProcessInstances> instances = client.getProcessInstances(containerId, 0, 999, null, null, ProcessInstanceStatus.Active);
+
 ```
