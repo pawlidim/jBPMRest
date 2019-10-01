@@ -6,24 +6,21 @@ package de.pawlidi.jbpm.rest.data;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author PAWLIDIM
  *
  */
-@XmlRootElement(name = "kie-server-config-item")
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigItem implements Serializable {
 
-	@XmlElement(name = "itemName")
+	@JsonProperty("itemName")
 	private String name;
-	@XmlElement(name = "itemValue")
+	@JsonProperty("itemValue")
 	private String value;
-	@XmlElement(name = "itemType")
+	@JsonProperty("itemType")
 	private String type;
 
 	protected ConfigItem() {

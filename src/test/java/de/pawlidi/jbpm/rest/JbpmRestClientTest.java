@@ -33,7 +33,7 @@ import de.pawlidi.jbpm.rest.data.TaskSummaryList;
  */
 public class JbpmRestClientTest {
 
-	private static final String URL = "http://localhost:8181";
+	private static final String URL = "http://192.168.99.100";
 	private static final String USER = "wbadmin";
 	private static final String PASSWORD = "wbadmin";
 	private JbpmRestClient client;
@@ -288,6 +288,30 @@ public class JbpmRestClientTest {
 		assertTrue(instanceId.isPresent());
 		assertTrue(client.activateTask(containerId, instanceId.get(), USER));
 		assertTrue(client.completeTask(containerId, instanceId.get(), true, USER, processParams));
+	}
+
+	@Test
+	public void testClaimTask() {
+		Optional<Containers> containers = client.getContainers();
+		assertTrue(containers.isPresent());
+		assertFalse(containers.get().getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.get().getResult().getContainers();
+		String containerId = null;
+		String processId = null;
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				containerId = data.getId();
+				break;
+			}
+		}
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, null, 999, null, null);
+		assertTrue(defs.isPresent());
+		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
+		for (ProcessDefinition def : processDefinitions) {
+			processId = def.getId();
+			break;
+		}
+		assertTrue(client.claimTask(containerId, 62L, "pawlidim"));
 	}
 
 }
