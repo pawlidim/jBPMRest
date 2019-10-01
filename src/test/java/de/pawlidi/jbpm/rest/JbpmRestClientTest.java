@@ -33,7 +33,7 @@ import de.pawlidi.jbpm.rest.data.TaskSummaryList;
  */
 public class JbpmRestClientTest {
 
-	private static final String URL = "http://192.168.99.100";
+	private static final String URL = "http://localhost:8181";
 	private static final String USER = "wbadmin";
 	private static final String PASSWORD = "wbadmin";
 	private JbpmRestClient client;
