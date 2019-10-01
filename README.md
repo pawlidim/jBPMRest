@@ -21,9 +21,9 @@ mvn clean install
 ### Maven ###
 ```
 <dependency>
-  <groupId>de.pawlidi</groupId>
-  <artifactId>jBPMRest</artifactId>
-	<version>1.0.0</version>
+	<groupId>de.pawlidi</groupId>
+	<artifactId>jBPMRest</artifactId>
+	<version>1.0.1</version>
 </dependency>
 
 ```
@@ -31,13 +31,13 @@ mvn clean install
 ### Gradle ###
 ```
 dependencies {
-    compile group: 'de.pawlidi', name: 'jBPMRest', version: '1.0.0'
+    compile group: 'de.pawlidi', name: 'jBPMRest', version: '1.0.1'
 }
 ```
 
 ### Ivy ###
 ```
-<dependency org="de.pawlidi" name="jBPMRest" rev="1.0.0"/>
+<dependency org="de.pawlidi" name="jBPMRest" rev="1.0.1"/>
 ```
 
 ### Example ###
@@ -45,4 +45,19 @@ dependencies {
 
 Add jBPMRest jar file to your application classpath. The following example shows the basic usage of this library.
 
-TODO
+```java
+final String URL = "http://localhost:8181";
+final String USER = "wbadmin";
+final String PASSWORD = "wbadmin";
+
+JbpmRestClient client = new JbpmRestClient(URL, USER, PASSWORD);
+
+// read all containers from jbpm server
+Optional<Containers> containers = client.getContainers();
+
+containerId = ..
+
+// read process instaces from container
+Optional<ProcessInstances> instances = client.getProcessInstances(containerId, 0, 999, null, null, ProcessInstanceStatus.Active);
+
+```
