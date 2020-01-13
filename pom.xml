@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.pawlidi</groupId>
 	<artifactId>jBPMRest</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<name>jBPM rest api client</name>
 	<description>jBPM rest api client based on retrofit</description>
 	<properties>
@@ -43,7 +43,7 @@
 		<url>https://github.com/pawlidim</url>
 		<connection>scm:git:git://github.com/pawlidim/jBPMRest.git</connection>
 		<developerConnection>scm:git:git@github.com/pawlidim/jBPMRest.git</developerConnection>
-		<tag>jBPMRest-1.0.2</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
 		<url>https://github.com/pawlidim/jBPMRest/issues</url>
