@@ -4,6 +4,7 @@
 package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,15 +26,15 @@ public class ProcessInstance implements Serializable {
 	@JsonProperty("process-version")
 	private String version;
 	@JsonProperty("process-instance-id")
-	private String intstanceId;
+	private Long intstanceId;
 	@JsonProperty("process-instance-state")
 	private ProcessInstanceStatus status;
 	@JsonProperty("container-id")
 	private String containerId;
 	@JsonProperty("initiator")
 	private String initiator;
-	// @JsonProperty("start-date")
-	private String startDate;
+	@JsonProperty("start-date")
+	private LocalDateTime startDate;
 	@JsonProperty("process-instance-desc")
 	private String description;
 	@JsonProperty("correlation-key")
@@ -56,14 +57,15 @@ public class ProcessInstance implements Serializable {
 	/**
 	 * @return the intstanceId
 	 */
-	public String getIntstanceId() {
+	public Long getIntstanceId() {
 		return intstanceId;
 	}
 
 	/**
-	 * @param intstanceId the intstanceId to set
+	 * @param intstanceId
+	 *            the intstanceId to set
 	 */
-	public void setIntstanceId(String intstanceId) {
+	public void setIntstanceId(Long intstanceId) {
 		this.intstanceId = intstanceId;
 	}
 
@@ -75,7 +77,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param processId the processId to set
+	 * @param processId
+	 *            the processId to set
 	 */
 	public void setProcessId(String processId) {
 		this.processId = processId;
@@ -89,7 +92,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -103,7 +107,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param version the version to set
+	 * @param version
+	 *            the version to set
 	 */
 	public void setVersion(String version) {
 		this.version = version;
@@ -117,7 +122,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param state the state to set
+	 * @param state
+	 *            the state to set
 	 */
 	public void setStatus(ProcessInstanceStatus status) {
 		this.status = status;
@@ -131,7 +137,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param containerId the containerId to set
+	 * @param containerId
+	 *            the containerId to set
 	 */
 	public void setContainerId(String containerId) {
 		this.containerId = containerId;
@@ -145,7 +152,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param initiator the initiator to set
+	 * @param initiator
+	 *            the initiator to set
 	 */
 	public void setInitiator(String initiator) {
 		this.initiator = initiator;
@@ -154,14 +162,15 @@ public class ProcessInstance implements Serializable {
 	/**
 	 * @return the startDate
 	 */
-	public String getStartDate() {
+	public LocalDateTime getStartDate() {
 		return startDate;
 	}
 
 	/**
-	 * @param startDate the startDate to set
+	 * @param startDate
+	 *            the startDate to set
 	 */
-	public void setStartDate(String startDate) {
+	public void setStartDate(LocalDateTime startDate) {
 		this.startDate = startDate;
 	}
 
@@ -173,7 +182,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -187,7 +197,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param correlationKey the correlationKey to set
+	 * @param correlationKey
+	 *            the correlationKey to set
 	 */
 	public void setCorrelationKey(String correlationKey) {
 		this.correlationKey = correlationKey;
@@ -201,7 +212,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param parentInstanceId the parentInstanceId to set
+	 * @param parentInstanceId
+	 *            the parentInstanceId to set
 	 */
 	public void setParentInstanceId(String parentInstanceId) {
 		this.parentInstanceId = parentInstanceId;
@@ -215,7 +227,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param variables the variables to set
+	 * @param variables
+	 *            the variables to set
 	 */
 	public void setVariables(Map<String, String> variables) {
 		this.variables = variables;
@@ -229,7 +242,8 @@ public class ProcessInstance implements Serializable {
 	}
 
 	/**
-	 * @param taskSummaryList the taskSummaryList to set
+	 * @param taskSummaryList
+	 *            the taskSummaryList to set
 	 */
 	public void setTaskSummaryList(TaskSummaryList taskSummaryList) {
 		this.taskSummaryList = taskSummaryList;

@@ -1,6 +1,13 @@
 package de.pawlidi.jbpm.rest;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import okhttp3.Authenticator;
 import okhttp3.Credentials;
@@ -38,7 +45,12 @@ public final class RetrofitFactory {
 			builder.baseUrl(baseUrl);
 
 			// add converter
-			builder.addConverterFactory(JacksonConverterFactory.create());
+			JavaTimeModule module = new JavaTimeModule();
+			LocalDateTimeDeserializer deserializer = new LocalDateTimeDeserializer();
+			module.addDeserializer(LocalDateTime.class, deserializer);
+			ObjectMapper mapper = JsonMapper.builder().addModule(new ParameterNamesModule()).addModule(new Jdk8Module())
+					.addModule(module).build();
+			builder.addConverterFactory(JacksonConverterFactory.create(mapper));
 
 			// add client
 			addClient(builder, username, password);

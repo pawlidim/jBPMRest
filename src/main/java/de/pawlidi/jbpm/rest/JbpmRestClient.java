@@ -25,6 +25,7 @@ import de.pawlidi.jbpm.rest.data.TaskComments;
 import de.pawlidi.jbpm.rest.data.TaskStatus;
 import de.pawlidi.jbpm.rest.data.TaskSummary;
 import de.pawlidi.jbpm.rest.data.TaskSummaryList;
+import de.pawlidi.jbpm.rest.data.TimerInstanceList;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -584,6 +585,13 @@ public class JbpmRestClient {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @return
+	 */
 	public boolean releaseTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
@@ -600,6 +608,13 @@ public class JbpmRestClient {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @return
+	 */
 	public boolean resumeTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
@@ -616,6 +631,13 @@ public class JbpmRestClient {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @return
+	 */
 	public boolean skipTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
@@ -632,6 +654,13 @@ public class JbpmRestClient {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @return
+	 */
 	public boolean startTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
@@ -648,6 +677,13 @@ public class JbpmRestClient {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @return
+	 */
 	public boolean stopTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
@@ -664,6 +700,13 @@ public class JbpmRestClient {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param containerId
+	 * @param taskInstanceId
+	 * @param actorId
+	 * @return
+	 */
 	public boolean suspendTask(String containerId, Long taskInstanceId, String actorId) {
 		if (StringUtils.isBlank(containerId) || taskInstanceId == null) {
 			return false;
@@ -676,6 +719,54 @@ public class JbpmRestClient {
 			}
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Could not suspend task", e);
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param processInstanceId
+	 * @return
+	 */
+	public Optional<TimerInstanceList> getTimers(String containerId, Long processInstanceId) {
+		if (StringUtils.isBlank(containerId) || processInstanceId == null) {
+			return Optional.empty();
+		}
+		Call<TimerInstanceList> call = service.getTimers(containerId, processInstanceId);
+		try {
+			Response<TimerInstanceList> response = call.execute();
+			if (response.isSuccessful()) {
+				return Optional.ofNullable(response.body());
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not get timers", e);
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * 
+	 * @param containerId
+	 * @param processInstanceId
+	 * @param timerId
+	 * @param relative
+	 * @param timerData
+	 * @return
+	 */
+	public boolean updateTimer(String containerId, Long processInstanceId, Long timerId, Boolean relative,
+			Map<String, String> timerData) {
+		if (StringUtils.isBlank(containerId) || processInstanceId == null || timerId == null) {
+			return false;
+		}
+		Call<Void> call = service.updateTimer(containerId, processInstanceId, timerId, relative, timerData);
+		try {
+			Response<Void> response = call.execute();
+			if (response.isSuccessful()) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Could not update timer", e);
 		}
 		return false;
 	}

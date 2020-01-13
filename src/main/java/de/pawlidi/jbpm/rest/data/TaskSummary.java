@@ -1,7 +1,7 @@
 package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,12 +33,12 @@ public class TaskSummary implements Serializable {
 	private String actualOwner;
 	@JsonProperty("task-created-by")
 	private String createdBy;
-	// @JsonProperty("task-created-on")
-	private Date createdOn;
-	// @JsonProperty("task-activation-time")
-	private Date activationTime;
-	// @JsonProperty("task-expiration-time")
-	private Date expirationTime;
+	@JsonProperty("task-created-on")
+	private LocalDateTime createdOn;
+	@JsonProperty("task-activation-time")
+	private LocalDateTime activationTime;
+	@JsonProperty("task-expiration-time")
+	private LocalDateTime expirationTime;
 	@JsonProperty("task-proc-inst-id")
 	private Long processInstanceId;
 	@JsonProperty("task-proc-def-id")
@@ -60,7 +60,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -74,7 +75,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -88,7 +90,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param subject the subject to set
+	 * @param subject
+	 *            the subject to set
 	 */
 	public void setSubject(String subject) {
 		this.subject = subject;
@@ -102,7 +105,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -116,7 +120,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param status the status to set
+	 * @param status
+	 *            the status to set
 	 */
 	public void setStatus(TaskStatus status) {
 		this.status = status;
@@ -130,7 +135,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param priority the priority to set
+	 * @param priority
+	 *            the priority to set
 	 */
 	public void setPriority(Integer priority) {
 		this.priority = priority;
@@ -144,7 +150,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param skipable the skipable to set
+	 * @param skipable
+	 *            the skipable to set
 	 */
 	public void setSkipable(Boolean skipable) {
 		this.skipable = skipable;
@@ -158,7 +165,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param actualOwner the actualOwner to set
+	 * @param actualOwner
+	 *            the actualOwner to set
 	 */
 	public void setActualOwner(String actualOwner) {
 		this.actualOwner = actualOwner;
@@ -172,7 +180,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param createdBy the createdBy to set
+	 * @param createdBy
+	 *            the createdBy to set
 	 */
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
@@ -181,42 +190,45 @@ public class TaskSummary implements Serializable {
 	/**
 	 * @return the createdOn
 	 */
-	public Date getCreatedOn() {
+	public LocalDateTime getCreatedOn() {
 		return createdOn;
 	}
 
 	/**
-	 * @param createdOn the createdOn to set
+	 * @param createdOn
+	 *            the createdOn to set
 	 */
-	public void setCreatedOn(Date createdOn) {
+	public void setCreatedOn(LocalDateTime createdOn) {
 		this.createdOn = createdOn;
 	}
 
 	/**
 	 * @return the activationTime
 	 */
-	public Date getActivationTime() {
+	public LocalDateTime getActivationTime() {
 		return activationTime;
 	}
 
 	/**
-	 * @param activationTime the activationTime to set
+	 * @param activationTime
+	 *            the activationTime to set
 	 */
-	public void setActivationTime(Date activationTime) {
+	public void setActivationTime(LocalDateTime activationTime) {
 		this.activationTime = activationTime;
 	}
 
 	/**
 	 * @return the expirationTime
 	 */
-	public Date getExpirationTime() {
+	public LocalDateTime getExpirationTime() {
 		return expirationTime;
 	}
 
 	/**
-	 * @param expirationTime the expirationTime to set
+	 * @param expirationTime
+	 *            the expirationTime to set
 	 */
-	public void setExpirationTime(Date expirationTime) {
+	public void setExpirationTime(LocalDateTime expirationTime) {
 		this.expirationTime = expirationTime;
 	}
 
@@ -228,7 +240,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param processInstanceId the processInstanceId to set
+	 * @param processInstanceId
+	 *            the processInstanceId to set
 	 */
 	public void setProcessInstanceId(Long processInstanceId) {
 		this.processInstanceId = processInstanceId;
@@ -242,7 +255,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param processId the processId to set
+	 * @param processId
+	 *            the processId to set
 	 */
 	public void setProcessId(String processId) {
 		this.processId = processId;
@@ -256,7 +270,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param containerId the containerId to set
+	 * @param containerId
+	 *            the containerId to set
 	 */
 	public void setContainerId(String containerId) {
 		this.containerId = containerId;
@@ -270,7 +285,8 @@ public class TaskSummary implements Serializable {
 	}
 
 	/**
-	 * @param parentId the parentId to set
+	 * @param parentId
+	 *            the parentId to set
 	 */
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;

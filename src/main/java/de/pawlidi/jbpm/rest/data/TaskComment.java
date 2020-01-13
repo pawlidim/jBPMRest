@@ -1,7 +1,7 @@
 package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +14,7 @@ public class TaskComment implements Serializable {
 	@JsonProperty("comment-added-by")
 	private String addedBy;
 	@JsonProperty("comment-added-at")
-	private Date addedAt;
+	private LocalDateTime addedAt;
 
 	/**
 	 * @return the id
@@ -24,7 +24,8 @@ public class TaskComment implements Serializable {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -38,7 +39,8 @@ public class TaskComment implements Serializable {
 	}
 
 	/**
-	 * @param text the text to set
+	 * @param text
+	 *            the text to set
 	 */
 	public void setText(String text) {
 		this.text = text;
@@ -52,7 +54,8 @@ public class TaskComment implements Serializable {
 	}
 
 	/**
-	 * @param addedBy the addedBy to set
+	 * @param addedBy
+	 *            the addedBy to set
 	 */
 	public void setAddedBy(String addedBy) {
 		this.addedBy = addedBy;
@@ -61,14 +64,15 @@ public class TaskComment implements Serializable {
 	/**
 	 * @return the addedAt
 	 */
-	public Date getAddedAt() {
+	public LocalDateTime getAddedAt() {
 		return addedAt;
 	}
 
 	/**
-	 * @param addedAt the addedAt to set
+	 * @param addedAt
+	 *            the addedAt to set
 	 */
-	public void setAddedAt(Date addedAt) {
+	public void setAddedAt(LocalDateTime addedAt) {
 		this.addedAt = addedAt;
 	}
 

@@ -22,9 +22,10 @@ import de.pawlidi.jbpm.rest.data.ProcessDefinitions;
 import de.pawlidi.jbpm.rest.data.ProcessInstance;
 import de.pawlidi.jbpm.rest.data.ProcessInstanceStatus;
 import de.pawlidi.jbpm.rest.data.ProcessInstances;
-import de.pawlidi.jbpm.rest.data.TaskStatus;
 import de.pawlidi.jbpm.rest.data.TaskSummary;
 import de.pawlidi.jbpm.rest.data.TaskSummaryList;
+import de.pawlidi.jbpm.rest.data.TimerInstance;
+import de.pawlidi.jbpm.rest.data.TimerInstanceList;
 
 /**
  * 
@@ -47,6 +48,7 @@ public class JbpmRestClientTest {
 		processParams.put("actorId", "Test app");
 		processParams.put("result", "Test result");
 		processParams.put("decision", "Task decision");
+		processParams.put("indefinitePeriod", "true");
 	}
 
 	@After
@@ -237,7 +239,7 @@ public class JbpmRestClientTest {
 				break;
 			}
 		}
-		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, null, 999, null, null);
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, 0, 999, null, null);
 		assertTrue(defs.isPresent());
 		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
 		String processName = null;
@@ -251,8 +253,8 @@ public class JbpmRestClientTest {
 		for (ProcessInstance inst : instances.get().getProcessInstances()) {
 			System.out.println(
 					"Process instance for user " + USER + " >> " + inst.getIntstanceId() + " = " + inst.getName());
-			Optional<TaskSummaryList> tasksResponse = client.getTasksForInstance(new Long(inst.getIntstanceId()), null,
-					999, null, null, TaskStatus.Created);
+			Optional<TaskSummaryList> tasksResponse = client.getTasksForInstance(new Long(inst.getIntstanceId()), 0,
+					999, null, null, null);
 			assertTrue(tasksResponse.isPresent());
 			List<TaskSummary> taskSummaries = tasksResponse.get().getTaskSummaries();
 			assertNotNull(taskSummaries);
@@ -312,6 +314,44 @@ public class JbpmRestClientTest {
 			break;
 		}
 		assertTrue(client.claimTask(containerId, 62L, "pawlidim"));
+	}
+
+	@Test
+	public void testTimers() {
+		Optional<Containers> containers = client.getContainers();
+		assertTrue(containers.isPresent());
+		assertFalse(containers.get().getResult().getContainers().isEmpty());
+		Collection<Container> elms = containers.get().getResult().getContainers();
+		String containerId = null;
+		for (Container container : elms) {
+			for (ContainerData data : container.getContainerDataList()) {
+				containerId = data.getId();
+				break;
+			}
+		}
+		Optional<ProcessDefinitions> defs = client.getProcessDefinitions(containerId, 0, 999, null, null);
+		assertTrue(defs.isPresent());
+		Collection<ProcessDefinition> processDefinitions = defs.get().getProcessDefinitions();
+		String processName = null;
+		for (ProcessDefinition def : processDefinitions) {
+			processName = def.getName();
+			break;
+		}
+		Optional<ProcessInstances> instances = client.getProcessInstancesForInitiator(USER, null, 999, processName,
+				null, null, ProcessInstanceStatus.Active);
+		assertTrue(instances.isPresent());
+		for (ProcessInstance inst : instances.get().getProcessInstances()) {
+			System.out.println(
+					"Process instance for user " + USER + " >> " + inst.getIntstanceId() + " = " + inst.getName());
+			Optional<TimerInstanceList> timers = client.getTimers(containerId, inst.getIntstanceId());
+			if (timers.isPresent()) {
+				TimerInstanceList timerList = timers.get();
+				for (TimerInstance instance : timerList.getTimerInstances()) {
+					System.out.println("Timer " + instance.getName() + " >> " + instance.getActivationTime());
+				}
+			}
+		}
+
 	}
 
 }

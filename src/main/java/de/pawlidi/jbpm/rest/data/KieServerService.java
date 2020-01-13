@@ -512,4 +512,41 @@ public interface KieServerService {
 	@PUT("server/containers/{containerId}/tasks/{taskInstanceId}/states/suspended")
 	Call<Void> suspendTask(@Path("containerId") String containerId, @Path("taskInstanceId") Long taskInstanceId,
 			@Query("user") String actorId);
+
+	/**
+	 * Returns all timers for a specified process instance.
+	 * 
+	 * @param containerId
+	 *            container id that process instance belongs to
+	 * @param processInstanceId
+	 *            identifier of process instance that timer instances should be
+	 *            collected for
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@GET("server/admin/containers/{containerId}/processes/instances/{processInstanceId}/timers")
+	Call<TimerInstanceList> getTimers(@Path("containerId") String containerId,
+			@Path("processInstanceId") Long processInstanceId);
+
+	/**
+	 * Updates a specified timer for a specified process instance.
+	 * 
+	 * @param containerId
+	 *            container id that process instance belongs to
+	 * @param processInstanceId
+	 *            identifier of process instance that timer belongs to
+	 * @param timerId
+	 *            identifier of timer instance to be updated
+	 * @param relative
+	 *            optional flag that indicates if the time expression is relative to
+	 *            the current date or not, defaults to true
+	 * @param timerData
+	 *            Map of timer expressions - deplay, perios and repeat are allowed
+	 *            values in the map
+	 * @return
+	 */
+	@Headers({ "accept: application/json" })
+	@PUT("/server/admin/containers/{containerId}/processes/instances/{processInstanceId}/timers/{timerId}")
+	Call<Void> updateTimer(@Path("containerId") String containerId, @Path("processInstanceId") Long processInstanceId,
+			@Path("timerId") Long timerId, @Query("relative") Boolean relative, @Body Map<String, String> timerData);
 }
