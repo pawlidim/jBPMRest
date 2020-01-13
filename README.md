@@ -23,7 +23,7 @@ mvn clean install
 <dependency>
 	<groupId>de.pawlidi</groupId>
 	<artifactId>jBPMRest</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 </dependency>
 
 ```
@@ -31,13 +31,13 @@ mvn clean install
 ### Gradle ###
 ```
 dependencies {
-    compile group: 'de.pawlidi', name: 'jBPMRest', version: '1.0.1'
+    compile group: 'de.pawlidi', name: 'jBPMRest', version: '1.0.2'
 }
 ```
 
 ### Ivy ###
 ```
-<dependency org="de.pawlidi" name="jBPMRest" rev="1.0.1"/>
+<dependency org="de.pawlidi" name="jBPMRest" rev="1.0.2"/>
 ```
 
 ### Example ###
