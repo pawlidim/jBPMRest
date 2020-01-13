@@ -5,22 +5,19 @@ package de.pawlidi.jbpm.rest.data;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author PAWLIDIM
  *
  */
-@XmlRootElement(name = "kie-scanner")
-@XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Scanner implements Serializable {
 
-	@XmlElement(name = "status")
+	@JsonProperty("status")
 	private ScannerStatus status;
-	@XmlElement(name = "pollInterval")
+	@JsonProperty("pollInterval")
 	private Long pollInterval;
 
 	/**
