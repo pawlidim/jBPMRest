@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
@@ -27,6 +26,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  */
 public final class RetrofitFactory {
 
+	/** Invisible constructor */
 	private RetrofitFactory() {
 		super();
 	}
@@ -45,12 +45,7 @@ public final class RetrofitFactory {
 			builder.baseUrl(baseUrl);
 
 			// add converter
-			JavaTimeModule module = new JavaTimeModule();
-			LocalDateTimeDeserializer deserializer = new LocalDateTimeDeserializer();
-			module.addDeserializer(LocalDateTime.class, deserializer);
-			ObjectMapper mapper = JsonMapper.builder().addModule(new ParameterNamesModule()).addModule(new Jdk8Module())
-					.addModule(module).build();
-			builder.addConverterFactory(JacksonConverterFactory.create(mapper));
+			addConverter(builder);
 
 			// add client
 			addClient(builder, username, password);
@@ -58,6 +53,30 @@ public final class RetrofitFactory {
 			return builder.build();
 		}
 		return null;
+	}
+
+	private static void addConverter(Retrofit.Builder builder) {
+
+		// add java time module
+		JavaTimeModule javaTimeModule = new JavaTimeModule();
+		LocalDateTimeDeserializer deserializer = new LocalDateTimeDeserializer();
+		javaTimeModule.addDeserializer(LocalDateTime.class, deserializer);
+
+		// add parameter names module
+		ParameterNamesModule parameterNamesModule = new ParameterNamesModule();
+		Jdk8Module jdk8Module = new Jdk8Module();
+
+		// create json mapper and add modules
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(javaTimeModule);
+		mapper.registerModule(parameterNamesModule);
+		mapper.registerModule(jdk8Module);
+
+		// add mapper to converter factory
+		JacksonConverterFactory factory = JacksonConverterFactory.create(mapper);
+
+		// add factory to retrofit http api
+		builder.addConverterFactory(factory);
 	}
 
 	private static void addClient(Builder builder, final String username, final String password) {
