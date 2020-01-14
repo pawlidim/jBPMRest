@@ -4,6 +4,7 @@
 package de.pawlidi.jbpm.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -304,11 +305,16 @@ public class JbpmRestClient {
 	 * @return
 	 */
 	public Optional<TaskSummaryList> getTasksForInstance(Long processInstanceId, Integer page, Integer pageSize,
-			String sort, Boolean sortOrder, TaskStatus status) {
+			String sort, Boolean sortOrder, TaskStatus... status) {
 		if (processInstanceId == null) {
 			return Optional.empty();
 		}
-		String ordinalStatus = status != null ? status.getName() : null;
+		List<String> ordinalStatus = new ArrayList<>();
+		if (status != null && status.length > 0) {
+			for (TaskStatus taskStatus : status) {
+				ordinalStatus.add(taskStatus.getName());
+			}
+		}
 		Call<TaskSummaryList> call = service.getTasksForInstance(processInstanceId, page, pageSize, sort, sortOrder,
 				ordinalStatus);
 		try {

@@ -208,7 +208,7 @@ public interface KieServerService {
 	@GET("server/queries/tasks/instances/process/{processInstanceId}")
 	Call<TaskSummaryList> getTasksForInstance(@Path("processInstanceId") Long processInstanceId,
 			@Query("page") Integer page, @Query("pageSize") Integer pageSize, @Query("sort") String sort,
-			@Query("sortOrder") Boolean sortOrder, @Query("status") String status);
+			@Query("sortOrder") Boolean sortOrder, @Query("status") List<String> status);
 
 	/**
 	 * Returns information about a specified task instance.

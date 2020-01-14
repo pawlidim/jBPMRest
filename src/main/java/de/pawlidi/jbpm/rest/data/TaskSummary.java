@@ -292,4 +292,13 @@ public class TaskSummary implements Serializable {
 		this.parentId = parentId;
 	}
 
+	@Override
+	public String toString() {
+		return "TaskSummary [id=" + id + ", name=" + name + ", subject=" + subject + ", description=" + description
+				+ ", status=" + status + ", priority=" + priority + ", skipable=" + skipable + ", actualOwner="
+				+ actualOwner + ", createdBy=" + createdBy + ", createdOn=" + createdOn + ", activationTime="
+				+ activationTime + ", expirationTime=" + expirationTime + ", processInstanceId=" + processInstanceId
+				+ ", processId=" + processId + ", containerId=" + containerId + ", parentId=" + parentId + "]";
+	}
+
 }
